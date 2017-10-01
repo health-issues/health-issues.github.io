@@ -1,0 +1,134 @@
+@import 'App';
+
+#ranking.page {
+
+  .page-body {
+    background-color: darken($color-0, 10%);
+
+    .section-header{
+      color: white;
+    }
+  }
+
+  .slideshow {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .bt-arrow {
+      width: $baseline-height * 2;
+      height: $baseline-height * 2;
+      border: none;
+      background-color: white;
+      cursor: pointer;
+      flex-shrink: 0;
+
+      @include for-phone-down {
+        display: none;
+      };
+
+      &:disabled {
+        opacity: 0.24;
+      }
+
+      &:after {
+          content: '';
+          display: block;
+          border-width: 2px 2px 0 0;
+          border-style: solid;
+          border-color: $color-0;
+          width: $baseline-height;
+          height: $baseline-height;
+      }
+
+      &.back {
+        margin-right: $elements-margin;
+
+        &:after {
+          transform: rotate(-135deg);
+        }
+      }
+
+      &.forward {
+        margin-left: $elements-margin;
+
+        &:after {
+          transform: rotate(45deg);
+        }
+      }
+    }
+
+    .ranking-table-container {
+
+      overflow-x: hidden;
+      position: relative;
+
+      @include for-phone-down {
+        overflow-x: auto;
+      };
+
+      .ranking-table {
+        position: relative;
+        left: 0;
+        white-space: nowrap;
+        transition: left 0.5s ease-out;
+
+        @include for-phone-down {
+          white-space: normal;
+        };
+
+        .ranking-column {
+          display: inline-block;
+          width: 12.5%;
+          // padding: 0 $elements-margin 0 0;
+          padding-bottom: $baseline-height * 2;
+
+          @include for-tablet-portrait-down {
+            width: 20%;
+          }
+
+          @include for-phone-down {
+            width: 33%;
+          }
+
+          .header {
+            color: $color-0;
+            @include type-body-2;
+
+            span {
+              display: inline-block;
+              width: 100%;
+              padding: 0 $elements-padding/2;
+              border-bottom: 2px solid $color-0;
+            }
+          }
+
+          ul {
+            list-style: none;
+            padding-left: 0;
+
+            li {
+              cursor: pointer;
+
+              &.hover {
+                background-color: lighten($color-1, 24%);
+              }
+
+              &.active {
+                background-color: $color-1;
+              }
+
+              span {
+                display: inline-block;
+                width: 100%;
+                padding: 0 $elements-padding/2;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

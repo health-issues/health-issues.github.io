@@ -1,0 +1,54 @@
+@import 'App';
+
+#explore.page {
+
+  .page-body {
+    background-color: $color-gray;
+  }
+
+  .merge-button {
+    cursor: pointer;
+    @include type-chart-legend;
+    background-color: white;
+    color: $color-0;
+    border: 1px solid lighten($color-0, 24%);
+    position: relative;
+    top: 26px;
+    left: 100%;
+    transform: translateX(-100%);
+    padding: 2px 4px;
+
+    &:hover {
+      background-color: lighten($color-0, 52%);
+    }
+
+    &:active {
+      background-color: lighten($color-0, 48%);
+    }
+  }
+
+  .chart-item:not(:first-child) {
+    margin-top: 4px;
+  }
+
+  .top-queries-container {
+    @include columns(1);
+
+    h4 {
+      border-bottom: 2px solid rgba(0, 0, 0, 0.24);
+      margin-bottom: $baseline-height;
+      line-height: $baseline-height * 4;
+    }
+
+    .list-container {
+      p {
+        @include type-body-2;
+      }
+      ol {
+        padding-left: 0;
+        list-style-position: inside;
+        margin-top: 0;
+      }
+    }
+  }
+}

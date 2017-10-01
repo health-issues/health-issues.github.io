@@ -1,0 +1,391 @@
+@import 'App';
+
+#home.page {
+  // position: relative;
+  // z-index: 1;
+  text-align: left;
+  padding: $col-gutter-large;
+  color: $color-0;
+
+  @include for-phone-down {
+    padding: $col-gutter-small;
+  };
+
+  .top-topics-list {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+
+    .icon-container {
+      position: absolute;
+
+      @include for-phone-down {
+        width: 35px;
+        height: 35px;
+      };
+
+      &:nth-child(1), &:nth-child(2) {
+        display: none;
+      }
+
+      .icon, p {
+        position: absolute;
+        top: 0;
+        width: 80px;
+        height: 80px;
+        display: block;
+        transition-property: transform, opacity;
+        transition-duration: 1s;
+        transition-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        // animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+      }
+
+      .icon {
+
+        background-repeat: no-repeat;
+        background-position: center;
+
+        @include for-phone-down {
+          background-size: 70px 70px;
+        };
+
+        &.cough { background-image: url('../images/cough.svg'); }
+        &.skinrash { background-image: url('../images/skinrash.svg'); }
+        &.lung { background-image: url('../images/lung.svg'); }
+        &.heart { background-image: url('../images/heart.svg'); }
+        &.brain { background-image: url('../images/brain.svg'); }
+        &.cell { background-image: url('../images/cell.svg'); }
+        &.vaccine { background-image: url('../images/vaccine.svg'); }
+        &.temperature { background-image: url('../images/temperature.svg'); }
+        &.soap { background-image: url('../images/soap.svg'); }
+        &.acne { background-image: url('../images/acne.svg'); }
+        &.cream { background-image: url('../images/cream.svg'); }
+        &.tea { background-image: url('../images/tea.svg'); }
+        &.headache { background-image: url('../images/headache.svg'); }
+        &.blood { background-image: url('../images/blood.svg'); }
+        &.bacteria { background-image: url('../images/bacteria.svg'); }
+        &.hormone { background-image: url('../images/hormone.svg'); }
+        &.polen { background-image: url('../images/polen.svg'); }
+        &.itch { background-image: url('../images/itch.svg'); }
+        &.medicine { background-image: url('../images/medicine.svg'); }
+        &.virus { background-image: url('../images/virus.svg'); }
+        &.dizziness { background-image: url('../images/dizziness.svg'); }
+        &.play { background-image: url('../images/play.svg'); }
+
+        &.flipped {
+          transform: translateY(200%);
+          opacity: 0;
+          animation: icon-drop 5s 1;
+
+          &.cough { background-image: url('../images/cough.svg?fill=#FF91E6'); }
+          &.skinrash { background-image: url('../images/skinrash.svg?fill=#FF91E6'); }
+          &.lung { background-image: url('../images/lung.svg?fill=#FF91E6'); }
+          &.heart { background-image: url('../images/heart.svg?fill=#FF91E6'); }
+          &.brain { background-image: url('../images/brain.svg?fill=#FF91E6'); }
+          &.cell { background-image: url('../images/cell.svg?fill=#FF91E6'); }
+          &.vaccine { background-image: url('../images/vaccine.svg?fill=#FF91E6'); }
+          &.temperature { background-image: url('../images/temperature.svg?fill=#FF91E6'); }
+          &.soap { background-image: url('../images/soap.svg?fill=#FF91E6'); }
+          &.acne { background-image: url('../images/acne.svg?fill=#FF91E6'); }
+          &.cream { background-image: url('../images/cream.svg?fill=#FF91E6'); }
+          &.tea { background-image: url('../images/tea.svg?fill=#FF91E6'); }
+          &.headache { background-image: url('../images/headache.svg?fill=#FF91E6'); }
+          &.blood { background-image: url('../images/blood.svg?fill=#FF91E6'); }
+          &.bacteria { background-image: url('../images/bacteria.svg?fill=#FF91E6'); }
+          &.hormone { background-image: url('../images/hormone.svg?fill=#FF91E6'); }
+          &.polen { background-image: url('../images/polen.svg?fill=#FF91E6'); }
+          &.itch { background-image: url('../images/itch.svg?fill=#FF91E6'); }
+          &.medicine { background-image: url('../images/medicine.svg?fill=#FF91E6'); }
+          &.virus { background-image: url('../images/virus.svg?fill=#FF91E6'); }
+          &.dizziness { background-image: url('../images/dizziness.svg?fill=#FF91E6'); }
+          &.play { background-image: url('../images/play.svg?fill=#FF91E6'); }
+
+        }
+      }
+
+      p {
+        font-size: 21px;
+        opacity: 0;
+        color: $color-2;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        &.flipped {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .country-container {
+    position: absolute;
+    z-index: 2;
+    border-width: 2px 0;
+    border-color: darken($color-0, 24%);
+    border-style: solid;
+    padding: $baseline-height;
+    display: inline-block;
+    color: white;
+    font-size: 16px;
+    line-height: 21px;
+
+    @include for-phone-down {
+      @include type-body-1;
+    };
+
+    .disease-container, .country {
+      font-weight: 700;
+      @include for-phone-down {
+        @include type-body-2;
+      };
+    }
+
+    .disease-container {
+      color: $color-2;
+    }
+  }
+
+  .title-container {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 100%;
+    width: 100%;
+    padding: $col-gutter-large;
+    text-align: center;
+    transform-style: preserve-3d;
+    color: white;
+    // transition: top 2s ease-out, transform 2s ease-out, opacity 1.25s ease-out 0.75s;
+    transition: top 2s ease-out, opacity 1.25s ease-out 0.75s;
+    transform: translate(-50%, -50%);
+    // transform: translate3d(-50%, -50%, 200px) rotateX(50deg);
+    // transform: translateZ(200px) rotateX(50deg);
+    opacity: 0;
+
+    @include for-phone-down {
+      padding: $col-gutter-small;
+    };
+
+    &.enter {
+      opacity: 1;
+      top: 50%;
+      @include for-phone-down {
+        top: 60%;
+      };
+    }
+
+    h1 {
+      font-family: $font-sans;
+      font-weight: 900;
+      font-size: 12vw;
+      line-height: 10vw;
+      padding: $baseline-height*2;
+      margin-bottom: $baseline-height*2;
+      letter-spacing: 1px;
+      background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, $color-1), color-stop(0.8, $color-2));
+      background-image: gradient(linear, left top, right bottom, color-stop(0, $color-1), color-stop(0.8, $color-2));
+      color:transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      @include for-phone-down {
+        font-size: 21vw;
+        line-height: 18vw;
+        margin-bottom: 0;
+      };
+    }
+
+    .project-description {
+      width: 950px;
+      max-width: 100%;
+      margin-bottom: $baseline-height*3;
+      font-family: $font-mono;
+      font-size: 18px;
+      line-height: 26px;
+      text-align: center;
+
+      @include for-tablet-portrait-down {
+          @include type-body-2;
+          width: 65vw;
+      }
+
+      @include for-phone-down {
+        @include type-body-1;
+        margin-bottom: $baseline-height;
+        width: 100%;
+      };
+    }
+
+    .logos-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      @include for-phone-down {
+        flex-direction: column;
+      };
+
+      .gabriel {
+        font-family: $font-sans;
+        font-weight: 400;
+        font-size: 21px;
+        line-height: $baseline-height*3;
+        @include for-phone-down {
+          margin-top: $baseline-height;
+          @include type-intro;
+        };
+      }
+
+      span {
+        margin: 0 $elements-margin*2;
+      }
+
+      .google-news-lab-logo {
+        width: 200px;
+        height: $baseline-height*3;
+        background-image: url('../images/google-news-lab-logo.svg?fill=white');
+        background-repeat: no-repeat;
+        background-position: center;
+
+        @include for-phone-down {
+          width: 45%;
+          margin-top: -$baseline-height/2;
+        }
+
+        svg {
+          position: relative;
+          top: 50%;
+          transform: translateY(-50%);
+          fill: white;
+        }
+      }
+    }
+  }
+
+  // .menu-container {
+  //   z-index: 200;
+  //   position: absolute;
+  //   left: 0;
+  //   top: 0;
+  //   width: 100%;
+  //   color: white;
+  //
+  //   .container {
+  //     height: 100%;
+  //     display: flex;
+  //     flex-direction: column;
+  //     align-items: center;
+  //     justify-content: flex-end;
+  //
+  //     .menu {
+  //       margin-bottom: $baseline-height*4;
+  //     }
+  //   }
+  //
+  //   p {
+  //     text-align: center;
+  //     display: block;
+  //   }
+  //
+  //   ul {
+  //     text-align: center;
+  //     padding-left: 0;
+  //     list-style: none;
+  //     margin-top: $baseline-height;
+  //
+  //     li {
+  //       border-bottom: 1px solid white;
+  //       display: inline-block;
+  //       margin: 0 $elements-margin/2;
+  //     }
+  //
+  //     a {
+  //       @include type-h4;
+  //       font-size: 18px;
+  //       color: white;
+  //
+  //       display: inline-block;
+  //       cursor: pointer;
+  //       display: inline-block;
+  //       padding: $elements-padding/4  $elements-padding/2;
+  //
+  //       &:hover {
+  //         background-color: lighten($color-0, 12%);
+  //       }
+  //     }
+  //   }
+  // }
+
+  // .intro-overlay {
+  //   position: absolute;
+  //   z-index: 4;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 150vh;
+  //   background: linear-gradient(123deg, darken($color-0, 10%) 0%, $color-0 100%);
+  //   opacity: 0;
+  // }
+  //
+  // .intro-text-container {
+  //   position: absolute;
+  //   z-index: 5;
+  //   top: 110vh;
+  //   left: 0;
+  //   width: 100%;
+  //   text-align: center;
+  //   font-family: $font-mono;
+  //   font-size: 21px;
+  //   line-height: 34px;
+  //   color: white;
+  //
+  //   @include for-phone-down {
+  //     top: 100vh;
+  //     font-size: 16px;
+  //     line-height: 21px;
+  //   }
+  //
+  //   .intro-text {
+  //     width: 700px;
+  //     max-width: 100%;
+  //     margin: auto;
+  //     padding: 0 $col-gutter-large;
+  //   }
+  // }
+}
+
+// @keyframes icon-drop{
+//   0% {
+//     transform: translateY(0%);
+//     opacity: 1;
+//     // path, polygon, circle, rect, ellipse, line {
+//     //   stroke: $color-2 !important;
+//     // }
+//   }
+//   20% {
+//     transform: translateY(200%);
+//     opacity: 0;
+//     // path, polygon, circle, rect, ellipse, line {
+//     //   stroke: $color-2 !important;
+//     // }
+//   }
+//   60% {
+//     transform: translateY(-200%);
+//     opacity: 0;
+//     // path, polygon, circle, rect, ellipse, line {
+//     //   stroke: darken($color-0, 24%) !important;
+//     // }
+//   }
+//   100% {
+//     transform: translateY(0%);
+//     opacity: 1;
+//     // path, polygon, circle, rect, ellipse, line {
+//     //   stroke: darken($color-0, 24%) !important;
+//     // }
+//   }
+// }
