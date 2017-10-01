@@ -8,7 +8,6 @@ import Explore from './pages/Explore';
 import Ranking from './pages/Ranking';
 import About from './pages/About';
 import Footer from './pages/Footer';
-import ShinyAPI from './api/ShinyAPI';
 import TrendsAPI from './api/TrendsAPI';
 import terms from './data/terms';
 import countries from './data/countries';
@@ -25,21 +24,10 @@ app.main = (function (){
 
   let explore;
 
-  function loadShinyAPI() {
-    const shinyAPI = new ShinyAPI();
-    if (ENV !== 'DEVELOPMENT') {
-      shinyAPI.setup(function(){
-        loadTrendsAPI(shinyAPI);
-      });
-    } else {
-      loadTrendsAPI(null);
-    }
-  }
-
-  function loadTrendsAPI(shinyAPI: ?ShinyAPI) {
+  function loadTrendsAPI() {
     const trendsAPI = new TrendsAPI();
     trendsAPI.setup(function(){
-      render(shinyAPI, trendsAPI);
+      render(trendsAPI);
     });
   }
 
@@ -76,7 +64,7 @@ app.main = (function (){
   }
 
 
-  function render(shinyAPI: ?ShinyAPI, trendsAPI: TrendsAPI) {
+  function render(trendsAPI: TrendsAPI) {
 
     log.info('render');
     const body = document.querySelector('body');
@@ -94,7 +82,7 @@ app.main = (function (){
         const mainNav = new MainNav(mainContainer);
         const intro = new Intro(mainContainer);
         const stories = new Stories(mainContainer);
-        explore = new Explore(mainContainer, shinyAPI, trendsAPI);
+        explore = new Explore(mainContainer, trendsAPI);
         const ranking = new Ranking(mainContainer);
         const about = new About(mainContainer);
 
@@ -121,7 +109,7 @@ app.main = (function (){
     }
     log.info('Initializing app.');
     log.info('ENV: ' + ENV);
-    loadShinyAPI();
+    loadTrendsAPI();
   };
 
   return {

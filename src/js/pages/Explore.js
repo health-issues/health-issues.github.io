@@ -56,7 +56,7 @@ export default class Explore {
   trendsAPI: TrendsAPI;
   shinyAPI: ShinyAPI;
 
-  constructor(parentContainer: HTMLElement, shinyAPI: ?ShinyAPI, trendsAPI: TrendsAPI) {
+  constructor(parentContainer: HTMLElement, trendsAPI: TrendsAPI) {
     this.data = {
       prevDiseases: [],
       diseases: [],
@@ -74,52 +74,50 @@ export default class Explore {
     }
     const self = this;
     self.trendsAPI = trendsAPI;
-    if (shinyAPI) {
-      self.shinyAPI = shinyAPI;
-      self.shinyAPI.setCallback(self, function(explore, dataFromR) {
+    self.shinyAPI = new shinyAPI();
+    self.shinyAPI.setCallback(self, function(explore, dataFromR) {
 
-        const { diseases, total } = self.data;
-        const type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
-        const data = self.data[type];
-        const index = data.length;
-        const obj = {};
+      const { diseases, total } = self.data;
+      const type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
+      const data = self.data[type];
+      const index = data.length;
+      const obj = {};
 
-        obj[type] = data.concat({
-          term: diseases[index].name,
-          points: self.parseDataFromR(dataFromR)
-        });
-        self.updateData(obj);
+      obj[type] = data.concat({
+        term: diseases[index].name,
+        points: self.parseDataFromR(dataFromR)
+      });
+      self.updateData(obj);
 
-        // I'm still getting R Data for that one type
-        if (obj[type].length < total.length) {
-          // Trend? Keep parsing the already loaded data
-          if (type === 'trend') {
-            const dataToR = self.parseDataToR(type);
-            self.shinyAPI.updateData(type, dataToR);
+      // I'm still getting R Data for that one type
+      if (obj[type].length < total.length) {
+        // Trend? Keep parsing the already loaded data
+        if (type === 'trend') {
+          const dataToR = self.parseDataToR(type);
+          self.shinyAPI.updateData(type, dataToR);
 
-          // Seasonal? Go get more data from Google Trends
-          } else if (type === 'seasonal') {
-            setTimeout(function() {
-              self.getTrendsAPIGraph('seasonal');
-            }, 500);
-          }
-
-        // I'm done with this type!
-        } else {
-          // Trend? Start seasonal then
-          if (type === 'trend') {
+        // Seasonal? Go get more data from Google Trends
+        } else if (type === 'seasonal') {
+          setTimeout(function() {
             self.getTrendsAPIGraph('seasonal');
-          // Seasonal? Move on to load top queries
-          } else if (type === 'seasonal') {
-            self.updateData({ topQueries: [], isLoading: false });
-            setTimeout(function() {
-              self.getTrendsAPITopQueries();
-            }, 500);
-          }
+          }, 500);
         }
 
-      });
-    }
+      // I'm done with this type!
+      } else {
+        // Trend? Start seasonal then
+        if (type === 'trend') {
+          self.getTrendsAPIGraph('seasonal');
+        // Seasonal? Move on to load top queries
+        } else if (type === 'seasonal') {
+          self.updateData({ topQueries: [], isLoading: false });
+          setTimeout(function() {
+            self.getTrendsAPITopQueries();
+          }, 500);
+        }
+      }
+
+    });
 
     self.createElements(parentContainer);
   }
