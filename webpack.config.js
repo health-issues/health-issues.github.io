@@ -14,7 +14,7 @@ module.exports = {
   plugins: [
       new webpack.DefinePlugin({
           ENV: JSON.stringify(process.env.NODE_ENV),
-      }),
+      })
   ],
 	module: {
 		loaders: [
