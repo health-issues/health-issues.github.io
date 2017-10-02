@@ -39768,10 +39768,10 @@
 	  _createClass(ShinyAPI, [{
 	    key: 'setCallback',
 	    value: function setCallback(explore, callback) {
-	      // log.info('Shiny setCallback');
-	      // const self = this;
-	      // self.dataProcessingCallback = callback;
-	      // self.explore = explore;
+	      _loglevel2.default.info('Shiny setCallback');
+	      var self = this;
+	      self.dataProcessingCallback = callback;
+	      self.explore = explore;
 	      // // Add listener for stl data
 	      // Shiny.addCustomMessageHandler('seasonalCallback', function(dataFromR) {
 	      //   log.info('From R: ', dataFromR);
@@ -39792,16 +39792,42 @@
 	  }, {
 	    key: 'updateData',
 	    value: function updateData(type, data) {
-	      // log.info('ShinyAPI updateData');
-	      // log.info(type);
-	      // const { dataToR, dataFromR } = this.data;
-	      // if (arrayIsEqual(dataToR[type], data)) {
-	      //   this.dataProcessingCallback(this.explore, dataFromR[type]);
-	      // } else {
-	      //   dataToR[type] = data;
-	      //   log.info(this.data);
-	      //   Shiny.onInputChange(type, data);
-	      // }
+	      _loglevel2.default.info('ShinyAPI updateData');
+	      _loglevel2.default.info(type);
+	      var _data = this.data,
+	          dataToR = _data.dataToR,
+	          dataFromR = _data.dataFromR;
+
+	      if ((0, _util.arrayIsEqual)(dataToR[type], data)) {
+	        this.dataProcessingCallback(this.explore, dataFromR[type]);
+	      } else {
+	        dataToR[type] = data;
+	        var xhr = new XMLHttpRequest();
+	        xhr.open('POST', 'localhost:4000/stl');
+	        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	        xhr.send({ data: data });
+
+	        xhr.onreadystatechange = function () {
+	          console.log('Calling...');
+	          var DONE = 4;
+	          var OK = 200;
+	          if (xhr.readyState === DONE) {
+	            console.log('Done.');
+	            if (xhr.status === OK) {
+	              console.log(xhr.responseText);
+	              var response = JSON.parse(xhr.responseText);
+	              console.log(response);
+	              //   self.data.dataFromR.seasonal = dataFromR;
+	              //   self.dataProcessingCallback(explore, dataFromR);
+	            } else {
+	              console.log(xhr.status);
+	            }
+	          }
+	        };
+
+	        //   log.info(this.data);
+	        //   Shiny.onInputChange(type, data);
+	      }
 	    }
 	  }]);
 

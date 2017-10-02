@@ -244,18 +244,18 @@ export default class Explore {
       }
       self.updateData(obj);
 
-      if (ENV !== 'DEVELOPMENT') {
+      // if (ENV !== 'DEVELOPMENT') {
         const dataToR = self.parseDataToR(type);
         shinyAPI.updateData(type, dataToR);
-      } else {
-        const obj = {
-          ...dummyData,
-          topQueries: [],
-          isLoading: false,
-        };
-        self.updateData(obj);
-        self.getTrendsAPITopQueries();
-      }
+      // } else {
+      //   const obj = {
+      //     ...dummyData,
+      //     topQueries: [],
+      //     isLoading: false,
+      //   };
+      //   self.updateData(obj);
+      //   self.getTrendsAPITopQueries();
+      // }
     });
   }
 
