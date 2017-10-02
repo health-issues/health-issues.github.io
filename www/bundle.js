@@ -78,10 +78,6 @@
 
 	var _Footer2 = _interopRequireDefault(_Footer);
 
-	var _ShinyAPI = __webpack_require__(102);
-
-	var _ShinyAPI2 = _interopRequireDefault(_ShinyAPI);
-
 	var _TrendsAPI = __webpack_require__(4);
 
 	var _TrendsAPI2 = _interopRequireDefault(_TrendsAPI);
@@ -110,10 +106,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	//  weak
-
-	var stickyfill = (0, _stickyfill2.default)();
-
+	var stickyfill = (0, _stickyfill2.default)(); //  weak
 
 	var app = app || {};
 
@@ -121,21 +114,10 @@
 
 	  var explore = void 0;
 
-	  function loadShinyAPI() {
-	    var shinyAPI = new _ShinyAPI2.default();
-	    if (true) {
-	      shinyAPI.setup(function () {
-	        loadTrendsAPI(shinyAPI);
-	      });
-	    } else {
-	      loadTrendsAPI(null);
-	    }
-	  }
-
-	  function loadTrendsAPI(shinyAPI) {
+	  function loadTrendsAPI() {
 	    var trendsAPI = new _TrendsAPI2.default();
 	    trendsAPI.setup(function () {
-	      render(shinyAPI, trendsAPI);
+	      render(trendsAPI);
 	    });
 	  }
 
@@ -171,7 +153,7 @@
 	    }, 1000);
 	  }
 
-	  function render(shinyAPI, trendsAPI) {
+	  function render(trendsAPI) {
 
 	    _loglevel2.default.info('render');
 	    var body = document.querySelector('body');
@@ -189,7 +171,7 @@
 	      var mainNav = new _MainNav2.default(mainContainer);
 	      var intro = new _Intro2.default(mainContainer);
 	      var stories = new _Stories2.default(mainContainer);
-	      explore = new _Explore2.default(mainContainer, shinyAPI, trendsAPI);
+	      explore = new _Explore2.default(mainContainer, trendsAPI);
 	      var ranking = new _Ranking2.default(mainContainer);
 	      var about = new _About2.default(mainContainer);
 
@@ -220,7 +202,7 @@
 	    }
 	    _loglevel2.default.info('Initializing app.');
 	    _loglevel2.default.info('ENV: ' + ("STAGING"));
-	    loadShinyAPI();
+	    loadTrendsAPI();
 	  };
 
 	  return {
@@ -39115,7 +39097,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Explore = function () {
-	  function Explore(parentContainer, shinyAPI, trendsAPI) {
+	  function Explore(parentContainer, trendsAPI) {
 	    _classCallCheck(this, Explore);
 
 	    this.data = {
@@ -39135,53 +39117,51 @@
 	    };
 	    var self = this;
 	    self.trendsAPI = trendsAPI;
-	    if (shinyAPI) {
-	      self.shinyAPI = shinyAPI;
-	      self.shinyAPI.setCallback(self, function (explore, dataFromR) {
-	        var _self$data = self.data,
-	            diseases = _self$data.diseases,
-	            total = _self$data.total;
+	    self.shinyAPI = new shinyAPI();
+	    self.shinyAPI.setCallback(self, function (explore, dataFromR) {
+	      var _self$data = self.data,
+	          diseases = _self$data.diseases,
+	          total = _self$data.total;
 
-	        var type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
-	        var data = self.data[type];
-	        var index = data.length;
-	        var obj = {};
+	      var type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
+	      var data = self.data[type];
+	      var index = data.length;
+	      var obj = {};
 
-	        obj[type] = data.concat({
-	          term: diseases[index].name,
-	          points: self.parseDataFromR(dataFromR)
-	        });
-	        self.updateData(obj);
-
-	        // I'm still getting R Data for that one type
-	        if (obj[type].length < total.length) {
-	          // Trend? Keep parsing the already loaded data
-	          if (type === 'trend') {
-	            var dataToR = self.parseDataToR(type);
-	            self.shinyAPI.updateData(type, dataToR);
-
-	            // Seasonal? Go get more data from Google Trends
-	          } else if (type === 'seasonal') {
-	            setTimeout(function () {
-	              self.getTrendsAPIGraph('seasonal');
-	            }, 500);
-	          }
-
-	          // I'm done with this type!
-	        } else {
-	          // Trend? Start seasonal then
-	          if (type === 'trend') {
-	            self.getTrendsAPIGraph('seasonal');
-	            // Seasonal? Move on to load top queries
-	          } else if (type === 'seasonal') {
-	            self.updateData({ topQueries: [], isLoading: false });
-	            setTimeout(function () {
-	              self.getTrendsAPITopQueries();
-	            }, 500);
-	          }
-	        }
+	      obj[type] = data.concat({
+	        term: diseases[index].name,
+	        points: self.parseDataFromR(dataFromR)
 	      });
-	    }
+	      self.updateData(obj);
+
+	      // I'm still getting R Data for that one type
+	      if (obj[type].length < total.length) {
+	        // Trend? Keep parsing the already loaded data
+	        if (type === 'trend') {
+	          var dataToR = self.parseDataToR(type);
+	          self.shinyAPI.updateData(type, dataToR);
+
+	          // Seasonal? Go get more data from Google Trends
+	        } else if (type === 'seasonal') {
+	          setTimeout(function () {
+	            self.getTrendsAPIGraph('seasonal');
+	          }, 500);
+	        }
+
+	        // I'm done with this type!
+	      } else {
+	        // Trend? Start seasonal then
+	        if (type === 'trend') {
+	          self.getTrendsAPIGraph('seasonal');
+	          // Seasonal? Move on to load top queries
+	        } else if (type === 'seasonal') {
+	          self.updateData({ topQueries: [], isLoading: false });
+	          setTimeout(function () {
+	            self.getTrendsAPITopQueries();
+	          }, 500);
+	        }
+	      }
+	    });
 
 	    self.createElements(parentContainer);
 	  }

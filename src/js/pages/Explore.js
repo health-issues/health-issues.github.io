@@ -74,7 +74,7 @@ export default class Explore {
     }
     const self = this;
     self.trendsAPI = trendsAPI;
-    self.shinyAPI = new shinyAPI();
+    self.shinyAPI = new ShinyAPI();
     self.shinyAPI.setCallback(self, function(explore, dataFromR) {
 
       const { diseases, total } = self.data;
