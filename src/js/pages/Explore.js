@@ -56,7 +56,7 @@ export default class Explore {
   trendsAPI: TrendsAPI;
   shinyAPI: ShinyAPI;
 
-  constructor(parentContainer: HTMLElement, shinyAPI: ?ShinyAPI, trendsAPI: TrendsAPI) {
+  constructor(parentContainer: HTMLElement, trendsAPI: TrendsAPI) {
     this.data = {
       prevDiseases: [],
       diseases: [],
@@ -74,11 +74,13 @@ export default class Explore {
     }
     const self = this;
     self.trendsAPI = trendsAPI;
-    if (shinyAPI) {
-      self.shinyAPI = shinyAPI;
-      self.shinyAPI.setCallback(self, function(explore, dataFromR) {
+    self.shinyAPI = new ShinyAPI();
+    self.shinyAPI.setCallback(self, function(explore, dataFromR) {
 
-        const { diseases, total } = self.data;
+      if (!dataFromR) {
+        self.updateData({ isChanging: false, isLoading: false });
+      } else {
+        const { diseases, geo, total } = self.data;
         const type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
         const data = self.data[type];
         const index = data.length;
@@ -95,7 +97,7 @@ export default class Explore {
           // Trend? Keep parsing the already loaded data
           if (type === 'trend') {
             const dataToR = self.parseDataToR(type);
-            self.shinyAPI.updateData(type, dataToR);
+            self.shinyAPI.updateData(type, dataToR, diseases.map(d => d.name), geo.name);
 
           // Seasonal? Go get more data from Google Trends
           } else if (type === 'seasonal') {
@@ -117,9 +119,9 @@ export default class Explore {
             }, 500);
           }
         }
+      }
 
-      });
-    }
+    });
 
     self.createElements(parentContainer);
   }
@@ -144,10 +146,6 @@ export default class Explore {
         }
       }
     }
-  }
-
-  handleRError(self: Explore) {
-    self.updateData({ isChanging: false, isLoading: false });
   }
 
   initializeExplore(self: Explore) {
@@ -246,18 +244,8 @@ export default class Explore {
       }
       self.updateData(obj);
 
-      if (ENV !== 'DEVELOPMENT') {
-        const dataToR = self.parseDataToR(type);
-        shinyAPI.updateData(type, dataToR);
-      } else {
-        const obj = {
-          ...dummyData,
-          topQueries: [],
-          isLoading: false,
-        };
-        self.updateData(obj);
-        self.getTrendsAPITopQueries();
-      }
+      const dataToR = self.parseDataToR(type);
+      shinyAPI.updateData(type, dataToR, diseases.map(d => d.name), geo.name);
     });
   }
 

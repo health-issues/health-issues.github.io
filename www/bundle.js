@@ -78,10 +78,6 @@
 
 	var _Footer2 = _interopRequireDefault(_Footer);
 
-	var _ShinyAPI = __webpack_require__(102);
-
-	var _ShinyAPI2 = _interopRequireDefault(_ShinyAPI);
-
 	var _TrendsAPI = __webpack_require__(4);
 
 	var _TrendsAPI2 = _interopRequireDefault(_TrendsAPI);
@@ -110,10 +106,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	//  weak
-
-	var stickyfill = (0, _stickyfill2.default)();
-
+	var stickyfill = (0, _stickyfill2.default)(); //  weak
 
 	var app = app || {};
 
@@ -121,21 +114,10 @@
 
 	  var explore = void 0;
 
-	  function loadShinyAPI() {
-	    var shinyAPI = new _ShinyAPI2.default();
-	    if (true) {
-	      shinyAPI.setup(function () {
-	        loadTrendsAPI(shinyAPI);
-	      });
-	    } else {
-	      loadTrendsAPI(null);
-	    }
-	  }
-
-	  function loadTrendsAPI(shinyAPI) {
+	  function loadTrendsAPI() {
 	    var trendsAPI = new _TrendsAPI2.default();
 	    trendsAPI.setup(function () {
-	      render(shinyAPI, trendsAPI);
+	      render(trendsAPI);
 	    });
 	  }
 
@@ -171,7 +153,7 @@
 	    }, 1000);
 	  }
 
-	  function render(shinyAPI, trendsAPI) {
+	  function render(trendsAPI) {
 
 	    _loglevel2.default.info('render');
 	    var body = document.querySelector('body');
@@ -189,7 +171,7 @@
 	      var mainNav = new _MainNav2.default(mainContainer);
 	      var intro = new _Intro2.default(mainContainer);
 	      var stories = new _Stories2.default(mainContainer);
-	      explore = new _Explore2.default(mainContainer, shinyAPI, trendsAPI);
+	      explore = new _Explore2.default(mainContainer, trendsAPI);
 	      var ranking = new _Ranking2.default(mainContainer);
 	      var about = new _About2.default(mainContainer);
 
@@ -220,7 +202,7 @@
 	    }
 	    _loglevel2.default.info('Initializing app.');
 	    _loglevel2.default.info('ENV: ' + ("STAGING"));
-	    loadShinyAPI();
+	    loadTrendsAPI();
 	  };
 
 	  return {
@@ -39049,8 +39031,6 @@
 	  value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); //  weak
 
 	// Components
@@ -39115,7 +39095,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Explore = function () {
-	  function Explore(parentContainer, shinyAPI, trendsAPI) {
+	  function Explore(parentContainer, trendsAPI) {
 	    _classCallCheck(this, Explore);
 
 	    this.data = {
@@ -39135,12 +39115,16 @@
 	    };
 	    var self = this;
 	    self.trendsAPI = trendsAPI;
-	    if (shinyAPI) {
-	      self.shinyAPI = shinyAPI;
-	      self.shinyAPI.setCallback(self, function (explore, dataFromR) {
+	    self.shinyAPI = new _ShinyAPI2.default();
+	    self.shinyAPI.setCallback(self, function (explore, dataFromR) {
+
+	      if (!dataFromR) {
+	        self.updateData({ isChanging: false, isLoading: false });
+	      } else {
 	        var _self$data = self.data,
-	            diseases = _self$data.diseases,
-	            total = _self$data.total;
+	            _diseases = _self$data.diseases,
+	            _geo = _self$data.geo,
+	            _total = _self$data.total;
 
 	        var type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
 	        var data = self.data[type];
@@ -39148,17 +39132,19 @@
 	        var obj = {};
 
 	        obj[type] = data.concat({
-	          term: diseases[index].name,
+	          term: _diseases[index].name,
 	          points: self.parseDataFromR(dataFromR)
 	        });
 	        self.updateData(obj);
 
 	        // I'm still getting R Data for that one type
-	        if (obj[type].length < total.length) {
+	        if (obj[type].length < _total.length) {
 	          // Trend? Keep parsing the already loaded data
 	          if (type === 'trend') {
 	            var dataToR = self.parseDataToR(type);
-	            self.shinyAPI.updateData(type, dataToR);
+	            self.shinyAPI.updateData(type, dataToR, _diseases.map(function (d) {
+	              return d.name;
+	            }), _geo.name);
 
 	            // Seasonal? Go get more data from Google Trends
 	          } else if (type === 'seasonal') {
@@ -39180,8 +39166,8 @@
 	            }, 500);
 	          }
 	        }
-	      });
-	    }
+	      }
+	    });
 
 	    self.createElements(parentContainer);
 	  }
@@ -39212,11 +39198,6 @@
 	          }
 	        }
 	      }
-	    }
-	  }, {
-	    key: 'handleRError',
-	    value: function handleRError(self) {
-	      self.updateData({ isChanging: false, isLoading: false });
 	    }
 	  }, {
 	    key: 'initializeExplore',
@@ -39342,17 +39323,10 @@
 	        }
 	        self.updateData(obj);
 
-	        if (true) {
-	          var dataToR = self.parseDataToR(type);
-	          shinyAPI.updateData(type, dataToR);
-	        } else {
-	          var _obj = _extends({}, _data4.dummyData, {
-	            topQueries: [],
-	            isLoading: false
-	          });
-	          self.updateData(_obj);
-	          self.getTrendsAPITopQueries();
-	        }
+	        var dataToR = self.parseDataToR(type);
+	        shinyAPI.updateData(type, dataToR, diseases.map(function (d) {
+	          return d.name;
+	        }), geo.name);
 	      });
 	    }
 	  }, {
@@ -39786,78 +39760,50 @@
 	  }
 
 	  _createClass(ShinyAPI, [{
-	    key: 'setup',
-	    value: function setup(callback) {
-	      _loglevel2.default.info('addShinyListeners');
-	      var self = this;
-
-	      $(document).on('shiny:connected', function (event) {
-	        _loglevel2.default.info('Connected to Shiny server');
-	      });
-
-	      $(document).on('shiny:sessioninitialized', function (event) {
-	        _loglevel2.default.info('Shiny session initialized');
-
-	        // Create a loop to ping the Shiny server and keep the websocket connection on
-	        clearInterval(self.keepShinyAlive);
-	        self.keepShinyAlive = setInterval(pingShiny, 10000);
-	        function pingShiny() {
-	          var timestamp = Date.now();
-	          Shiny.onInputChange('ping', timestamp);
-	        }
-
-	        self.isInitialized = true;
-	        callback();
-	      });
-
-	      $(document).on('shiny:idle', function (event) {
-	        _loglevel2.default.info('Shiny session idle');
-	      });
-
-	      $(document).on('shiny:disconnected', function (event) {
-	        _loglevel2.default.info('Disconnected from Shiny server');
-	        location.reload();
-	      });
-	    }
-	  }, {
 	    key: 'setCallback',
 	    value: function setCallback(explore, callback) {
 	      _loglevel2.default.info('Shiny setCallback');
 	      var self = this;
 	      self.dataProcessingCallback = callback;
 	      self.explore = explore;
-	      // Add listener for stl data
-	      Shiny.addCustomMessageHandler('seasonalCallback', function (dataFromR) {
-	        _loglevel2.default.info('From R: ', dataFromR);
-	        self.data.dataFromR.seasonal = dataFromR;
-	        self.dataProcessingCallback(explore, dataFromR);
-	      });
-	      Shiny.addCustomMessageHandler('trendCallback', function (dataFromR) {
-	        _loglevel2.default.info('From R: ', dataFromR);
-	        self.data.dataFromR.trend = dataFromR;
-	        _loglevel2.default.info(self.data);
-	        self.dataProcessingCallback(explore, dataFromR);
-	      });
-	      Shiny.addCustomMessageHandler('error', function (err) {
-	        _loglevel2.default.error(err);
-	        self.explore.handleRError(explore);
-	      });
 	    }
 	  }, {
 	    key: 'updateData',
-	    value: function updateData(type, data) {
+	    value: function updateData(type, data, diseases, geo) {
 	      _loglevel2.default.info('ShinyAPI updateData');
 	      _loglevel2.default.info(type);
-	      var _data = this.data,
-	          dataToR = _data.dataToR,
-	          dataFromR = _data.dataFromR;
+	      var self = this;
+	      var _self$data = self.data,
+	          dataToR = _self$data.dataToR,
+	          dataFromR = _self$data.dataFromR;
 
 	      if ((0, _util.arrayIsEqual)(dataToR[type], data)) {
-	        this.dataProcessingCallback(this.explore, dataFromR[type]);
+	        self.dataProcessingCallback(self.explore, dataFromR[type]);
 	      } else {
 	        dataToR[type] = data;
-	        _loglevel2.default.info(this.data);
-	        Shiny.onInputChange(type, data);
+	        var xhr = new XMLHttpRequest();
+	        xhr.open('POST', 'http://localhost:4000/stl');
+	        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	        xhr.send('type=' + type + '&data=' + data.join('|') + '&diseases=' + diseases + '&geo=' + geo);
+
+	        xhr.onreadystatechange = function () {
+	          console.log('Calling...');
+	          var DONE = 4;
+	          var OK = 200;
+	          if (xhr.readyState === DONE) {
+	            console.log('Done.');
+	            if (xhr.status === OK) {
+	              console.log(xhr.responseText);
+	              var dataFromR = JSON.parse(xhr.responseText);
+	              console.log(dataFromR);
+	              self.data.dataFromR[type] = dataFromR;
+	              self.dataProcessingCallback(explore, dataFromR);
+	            } else {
+	              console.log(xhr.status);
+	              self.dataProcessingCallback(explore, null);
+	            }
+	          }
+	        };
 	      }
 	    }
 	  }]);
