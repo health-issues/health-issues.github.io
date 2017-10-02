@@ -77,7 +77,7 @@ export default class Explore {
     self.shinyAPI = new ShinyAPI();
     self.shinyAPI.setCallback(self, function(explore, dataFromR) {
 
-      const { diseases, total } = self.data;
+      const { diseases, geo, total } = self.data;
       const type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
       const data = self.data[type];
       const index = data.length;
@@ -94,7 +94,7 @@ export default class Explore {
         // Trend? Keep parsing the already loaded data
         if (type === 'trend') {
           const dataToR = self.parseDataToR(type);
-          self.shinyAPI.updateData(type, dataToR);
+          self.shinyAPI.updateData(type, dataToR, diseases.map(d => d.name), geo.name);
 
         // Seasonal? Go get more data from Google Trends
         } else if (type === 'seasonal') {
@@ -244,18 +244,8 @@ export default class Explore {
       }
       self.updateData(obj);
 
-      // if (ENV !== 'DEVELOPMENT') {
-        const dataToR = self.parseDataToR(type);
-        shinyAPI.updateData(type, dataToR);
-      // } else {
-      //   const obj = {
-      //     ...dummyData,
-      //     topQueries: [],
-      //     isLoading: false,
-      //   };
-      //   self.updateData(obj);
-      //   self.getTrendsAPITopQueries();
-      // }
+      const dataToR = self.parseDataToR(type);
+      shinyAPI.updateData(type, dataToR, diseases.map(d => d.name), geo.name);
     });
   }
 

@@ -58,19 +58,20 @@ export default class ShinyAPI {
     // });
   }
 
-  updateData(type: string, data) {
+  updateData(type: string, data, diseases: Array<String>, geo: String) {
     log.info('ShinyAPI updateData');
     log.info(type);
-    const { dataToR, dataFromR } = this.data;
+    const self = this;
+    const { dataToR, dataFromR } = self.data;
     if (arrayIsEqual(dataToR[type], data)) {
-      this.dataProcessingCallback(this.explore, dataFromR[type]);
+      self.dataProcessingCallback(self.explore, dataFromR[type]);
 
     } else {
       dataToR[type] = data;
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'http://localhost:4000/stl');
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.send(`type=${type}&data=${data.join('|')}`);
+      xhr.send(`type=${type}&data=${data.join('|')}&diseases=${diseases}&geo=${geo}`);
 
       xhr.onreadystatechange = function(){
         console.log('Calling...');
@@ -80,18 +81,16 @@ export default class ShinyAPI {
           console.log('Done.');
           if(xhr.status === OK){
             console.log(xhr.responseText);
-            var response = JSON.parse(xhr.responseText);
-            console.log(response);
-            //   self.data.dataFromR.seasonal = dataFromR;
-            //   self.dataProcessingCallback(explore, dataFromR);
+            var dataFromR = JSON.parse(xhr.responseText);
+            console.log(dataFromR);
+              self.data.dataFromR[type] = dataFromR;
+              self.dataProcessingCallback(explore, dataFromR);
           }else{
             console.log(xhr.status);
+            self.explore.handleRError(explore);
           }
         }
       };
-
-    //   log.info(this.data);
-    //   Shiny.onInputChange(type, data);
     }
   }
 }
