@@ -39031,8 +39031,6 @@
 	  value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); //  weak
 
 	// Components
@@ -39121,6 +39119,7 @@
 	    self.shinyAPI.setCallback(self, function (explore, dataFromR) {
 	      var _self$data = self.data,
 	          diseases = _self$data.diseases,
+	          geo = _self$data.geo,
 	          total = _self$data.total;
 
 	      var type = dataFromR.indexOf('trend') > -1 ? 'trend' : 'seasonal';
@@ -39139,7 +39138,9 @@
 	        // Trend? Keep parsing the already loaded data
 	        if (type === 'trend') {
 	          var dataToR = self.parseDataToR(type);
-	          self.shinyAPI.updateData(type, dataToR);
+	          self.shinyAPI.updateData(type, dataToR, diseases.map(function (d) {
+	            return d.name;
+	          }), geo.name);
 
 	          // Seasonal? Go get more data from Google Trends
 	        } else if (type === 'seasonal') {
@@ -39322,17 +39323,10 @@
 	        }
 	        self.updateData(obj);
 
-	        if (true) {
-	          var dataToR = self.parseDataToR(type);
-	          shinyAPI.updateData(type, dataToR);
-	        } else {
-	          var _obj = _extends({}, _data4.dummyData, {
-	            topQueries: [],
-	            isLoading: false
-	          });
-	          self.updateData(_obj);
-	          self.getTrendsAPITopQueries();
-	        }
+	        var dataToR = self.parseDataToR(type);
+	        shinyAPI.updateData(type, dataToR, diseases.map(function (d) {
+	          return d.name;
+	        }), geo.name);
 	      });
 	    }
 	  }, {
@@ -39791,21 +39785,22 @@
 	    }
 	  }, {
 	    key: 'updateData',
-	    value: function updateData(type, data) {
+	    value: function updateData(type, data, diseases, geo) {
 	      _loglevel2.default.info('ShinyAPI updateData');
 	      _loglevel2.default.info(type);
-	      var _data = this.data,
-	          dataToR = _data.dataToR,
-	          dataFromR = _data.dataFromR;
+	      var self = this;
+	      var _self$data = self.data,
+	          dataToR = _self$data.dataToR,
+	          dataFromR = _self$data.dataFromR;
 
 	      if ((0, _util.arrayIsEqual)(dataToR[type], data)) {
-	        this.dataProcessingCallback(this.explore, dataFromR[type]);
+	        self.dataProcessingCallback(self.explore, dataFromR[type]);
 	      } else {
 	        dataToR[type] = data;
 	        var xhr = new XMLHttpRequest();
-	        xhr.open('POST', 'localhost:4000/stl');
+	        xhr.open('POST', 'http://localhost:4000/stl');
 	        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	        xhr.send({ data: data });
+	        xhr.send('type=' + type + '&data=' + data.join('|') + '&diseases=' + diseases + '&geo=' + geo);
 
 	        xhr.onreadystatechange = function () {
 	          console.log('Calling...');
@@ -39815,18 +39810,16 @@
 	            console.log('Done.');
 	            if (xhr.status === OK) {
 	              console.log(xhr.responseText);
-	              var response = JSON.parse(xhr.responseText);
-	              console.log(response);
-	              //   self.data.dataFromR.seasonal = dataFromR;
-	              //   self.dataProcessingCallback(explore, dataFromR);
+	              var dataFromR = JSON.parse(xhr.responseText);
+	              console.log(dataFromR);
+	              self.data.dataFromR[type] = dataFromR;
+	              self.dataProcessingCallback(explore, dataFromR);
 	            } else {
 	              console.log(xhr.status);
+	              self.explore.handleRError(explore);
 	            }
 	          }
 	        };
-
-	        //   log.info(this.data);
-	        //   Shiny.onInputChange(type, data);
 	      }
 	    }
 	  }]);
