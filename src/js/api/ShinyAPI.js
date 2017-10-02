@@ -70,7 +70,7 @@ export default class ShinyAPI {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'http://localhost:4000/stl');
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.send(`type=${type}&data=${data}`);
+      xhr.send(`type=${type}&data=${data.join('|')}`);
 
       xhr.onreadystatechange = function(){
         console.log('Calling...');
