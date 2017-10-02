@@ -39117,7 +39117,7 @@
 	    };
 	    var self = this;
 	    self.trendsAPI = trendsAPI;
-	    self.shinyAPI = new shinyAPI();
+	    self.shinyAPI = new _ShinyAPI2.default();
 	    self.shinyAPI.setCallback(self, function (explore, dataFromR) {
 	      var _self$data = self.data,
 	          diseases = _self$data.diseases,
