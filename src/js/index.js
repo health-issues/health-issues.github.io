@@ -102,10 +102,10 @@ app.main = (function (){
   }
 
   const init = function(){
-    if (ENV === 'PRODUCTION') {
-      log.disableAll();
-    } else {
+    if (ENV === 'DEVELOPMENT') {
       log.enableAll();
+    } else {
+      log.disableAll();
     }
     log.info('Initializing app.');
     log.info('ENV: ' + ENV);
