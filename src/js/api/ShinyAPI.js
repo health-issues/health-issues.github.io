@@ -58,19 +58,19 @@ export default class ShinyAPI {
       xhr.send(`type=${type}&data=${data.join('|')}&diseases=${diseases}&geo=${geo}`);
 
       xhr.onreadystatechange = function(){
-        console.log('Calling...');
+        log.info('Calling...');
         var DONE = 4;
         var OK = 200;
         if(xhr.readyState === DONE){
-          console.log('Done.');
+          log.info('Done.');
           if(xhr.status === OK){
-            console.log(xhr.responseText);
-            var dataFromR = JSON.parse(xhr.responseText);
-            console.log(dataFromR);
-              self.data.dataFromR[type] = dataFromR;
-              self.dataProcessingCallback(explore, dataFromR);
+            log.info(xhr.responseText);
+            const dataFromR = JSON.parse(xhr.responseText);
+            log.info(dataFromR);
+            self.data.dataFromR[type] = dataFromR;
+            self.dataProcessingCallback(explore, dataFromR);
           }else{
-            console.log(xhr.status);
+            log.info(xhr.status);
             self.dataProcessingCallback(explore, null);
           }
         }

@@ -39787,19 +39787,19 @@
 	        xhr.send('type=' + type + '&data=' + data.join('|') + '&diseases=' + diseases + '&geo=' + geo);
 
 	        xhr.onreadystatechange = function () {
-	          console.log('Calling...');
+	          _loglevel2.default.info('Calling...');
 	          var DONE = 4;
 	          var OK = 200;
 	          if (xhr.readyState === DONE) {
-	            console.log('Done.');
+	            _loglevel2.default.info('Done.');
 	            if (xhr.status === OK) {
-	              console.log(xhr.responseText);
-	              var dataFromR = JSON.parse(xhr.responseText);
-	              console.log(dataFromR);
-	              self.data.dataFromR[type] = dataFromR;
-	              self.dataProcessingCallback(explore, dataFromR);
+	              _loglevel2.default.info(xhr.responseText);
+	              var _dataFromR = JSON.parse(xhr.responseText);
+	              _loglevel2.default.info(_dataFromR);
+	              self.data.dataFromR[type] = _dataFromR;
+	              self.dataProcessingCallback(explore, _dataFromR);
 	            } else {
-	              console.log(xhr.status);
+	              _loglevel2.default.info(xhr.status);
 	              self.dataProcessingCallback(explore, null);
 	            }
 	          }
