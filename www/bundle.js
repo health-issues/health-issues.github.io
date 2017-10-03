@@ -195,13 +195,13 @@
 	  }
 
 	  var init = function init() {
-	    if (false) {
+	    if (true) {
 	      _loglevel2.default.disableAll();
 	    } else {
 	      _loglevel2.default.enableAll();
 	    }
 	    _loglevel2.default.info('Initializing app.');
-	    _loglevel2.default.info('ENV: ' + ("STAGING"));
+	    _loglevel2.default.info('ENV: ' + ("PRODUCTION"));
 	    loadTrendsAPI();
 	  };
 
@@ -1178,7 +1178,7 @@
 	        function start() {
 	          var apiKey = void 0,
 	              id = void 0;
-	          if (false) {
+	          if (true) {
 	            apiKey = _Keys.Keys['PRODUCTION'];
 	            id = 'diseases-production';
 	          } else {
@@ -39782,7 +39782,7 @@
 	      } else {
 	        dataToR[type] = data;
 	        var xhr = new XMLHttpRequest();
-	        xhr.open('POST', 'http://localhost:4000/stl');
+	        xhr.open('POST',  true ? 'http://34.228.70.245:4000/stl' : 'http://localhost:4000/stl');
 	        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	        xhr.send('type=' + type + '&data=' + data.join('|') + '&diseases=' + diseases + '&geo=' + geo);
 
