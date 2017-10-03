@@ -196,9 +196,9 @@
 
 	  var init = function init() {
 	    if (false) {
-	      _loglevel2.default.disableAll();
-	    } else {
 	      _loglevel2.default.enableAll();
+	    } else {
+	      _loglevel2.default.disableAll();
 	    }
 	    _loglevel2.default.info('Initializing app.');
 	    _loglevel2.default.info('ENV: ' + ("STAGING"));
