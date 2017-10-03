@@ -195,13 +195,13 @@
 	  }
 
 	  var init = function init() {
-	    if (true) {
+	    if (false) {
 	      _loglevel2.default.disableAll();
 	    } else {
 	      _loglevel2.default.enableAll();
 	    }
 	    _loglevel2.default.info('Initializing app.');
-	    _loglevel2.default.info('ENV: ' + ("PRODUCTION"));
+	    _loglevel2.default.info('ENV: ' + ("STAGING"));
 	    loadTrendsAPI();
 	  };
 
@@ -1178,7 +1178,7 @@
 	        function start() {
 	          var apiKey = void 0,
 	              id = void 0;
-	          if (true) {
+	          if (false) {
 	            apiKey = _Keys.Keys['PRODUCTION'];
 	            id = 'diseases-production';
 	          } else {
