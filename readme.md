@@ -1,6 +1,8 @@
 # I'm not Feeling Well
 
-This repo was built using this [Shiny App on Heroku boilerplate](https://github.com/virtualstaticvoid/heroku-shiny-app)
+Deploy:
+`npm run build`
+`git subtree push --prefix www origin master`
 
 # To-do
 

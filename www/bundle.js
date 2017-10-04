@@ -39782,7 +39782,7 @@
 	      } else {
 	        dataToR[type] = data;
 	        var xhr = new XMLHttpRequest();
-	        xhr.open('POST',  true ? 'http://34.228.70.245:4000/stl' : 'http://localhost:4000/stl');
+	        xhr.open('POST',  true ? 'http://52.3.72.44:4000/stl' : 'http://localhost:4000/stl');
 	        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	        xhr.send('type=' + type + '&data=' + data.join('|') + '&diseases=' + diseases + '&geo=' + geo);
 
