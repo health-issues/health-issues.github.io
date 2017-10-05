@@ -197,6 +197,10 @@
         line-height: 18vw;
         margin-bottom: 0;
       };
+
+      @include for-big-desktop-only {
+        padding: $baseline-height*3;
+      };
     }
 
     .project-description {
